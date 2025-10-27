@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Wifi, WifiOff } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 interface ServerStatusData {
@@ -28,14 +27,49 @@ export default function ServerStatus() {
   const fetchStatus = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('server-status');
+      const RAPIDAPI_KEY = import.meta.env.VITE_RAPIDAPI_KEY;
       
-      if (error) throw error;
-      
-      if (data) {
-        setStatus(data);
-        setLastUpdated(new Date());
+      if (!RAPIDAPI_KEY) {
+        console.error('RAPIDAPI_KEY not found');
+        toast.error('API key not configured');
+        return;
       }
+
+      const response = await fetch(
+        'https://freemcserver.p.rapidapi.com/v4/server/1795866/ping',
+        {
+          method: 'GET',
+          headers: {
+            'X-RapidAPI-Key': RAPIDAPI_KEY,
+            'X-RapidAPI-Host': 'freemcserver.p.rapidapi.com'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Transform to simplified format
+      const simplifiedData = {
+        online: data.online || false,
+        players: {
+          online: data.players?.online || 0,
+          max: data.players?.max || 0,
+        },
+        version: {
+          name: data.version?.name_clean || data.version?.name || 'Unknown',
+        },
+        motd: {
+          raw: data.motd?.clean?.[0] || data.motd?.raw?.[0] || 'Welcome to DarkAge SMP',
+        },
+        fetched_at: new Date().toISOString(),
+      };
+
+      setStatus(simplifiedData);
+      setLastUpdated(new Date());
     } catch (error) {
       console.error('Failed to fetch server status:', error);
       toast.error('Failed to fetch server status');
