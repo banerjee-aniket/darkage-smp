@@ -28,10 +28,11 @@ export default function ServerStatus() {
     setLoading(true);
     try {
       const RAPIDAPI_KEY = import.meta.env.VITE_RAPIDAPI_KEY;
+      const FMCS_TOKEN = import.meta.env.VITE_FMCS_TOKEN;
       
-      if (!RAPIDAPI_KEY) {
-        console.error('RAPIDAPI_KEY not found');
-        toast.error('API key not configured');
+      if (!RAPIDAPI_KEY || !FMCS_TOKEN) {
+        console.error('API credentials not found');
+        toast.error('API credentials not configured');
         return;
       }
 
@@ -40,8 +41,10 @@ export default function ServerStatus() {
         {
           method: 'GET',
           headers: {
-            'X-RapidAPI-Key': RAPIDAPI_KEY,
-            'X-RapidAPI-Host': 'freemcserver.p.rapidapi.com'
+            'x-rapidapi-key': RAPIDAPI_KEY,
+            'x-rapidapi-host': 'freemcserver.p.rapidapi.com',
+            'User-Agent': 'FMCS-USER-2502975',
+            'X-FMCS-Token': FMCS_TOKEN
           }
         }
       );
