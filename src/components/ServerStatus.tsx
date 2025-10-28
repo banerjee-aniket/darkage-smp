@@ -19,6 +19,25 @@ interface ServerStatusData {
   fetched_at: string;
 }
 
+interface ApiResponse {
+  success: boolean;
+  data: {
+    online: boolean;
+    players?: {
+      online: number;
+      max: number;
+    };
+    version?: {
+      name_clean?: string;
+      name?: string;
+    };
+    motd?: {
+      clean?: string[];
+      raw?: string[];
+    };
+  };
+}
+
 export default function ServerStatus() {
   const [status, setStatus] = useState<ServerStatusData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -29,7 +48,7 @@ export default function ServerStatus() {
     try {
       const RAPIDAPI_KEY = import.meta.env.VITE_RAPIDAPI_KEY;
       const FMCS_TOKEN = import.meta.env.VITE_FMCS_TOKEN;
-      
+
       if (!RAPIDAPI_KEY || !FMCS_TOKEN) {
         console.error('API credentials not found');
         toast.error('API credentials not configured');
@@ -44,8 +63,8 @@ export default function ServerStatus() {
             'x-rapidapi-key': RAPIDAPI_KEY,
             'x-rapidapi-host': 'freemcserver.p.rapidapi.com',
             'User-Agent': 'FMCS-USER-2502975',
-            'X-FMCS-Token': FMCS_TOKEN
-          }
+            'X-FMCS-Token': FMCS_TOKEN,
+          },
         }
       );
 
@@ -53,20 +72,26 @@ export default function ServerStatus() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
-      
-      // Transform to simplified format
-      const simplifiedData = {
-        online: data.online || false,
+      const api: ApiResponse = await response.json();
+      const payload = api.data;
+
+      const simplifiedData: ServerStatusData = {
+        online: payload.online || false,
         players: {
-          online: data.players?.online || 0,
-          max: data.players?.max || 0,
+          online: payload.players?.online || 0,
+          max: payload.players?.max || 0,
         },
         version: {
-          name: data.version?.name_clean || data.version?.name || 'Unknown',
+          name:
+            payload.version?.name_clean ||
+            payload.version?.name ||
+            'Unknown',
         },
         motd: {
-          raw: data.motd?.clean?.[0] || data.motd?.raw?.[0] || 'Welcome to DarkAge SMP',
+          raw:
+            payload.motd?.clean?.[0] ||
+            payload.motd?.raw?.[0] ||
+            'Welcome to DarkAge SMP',
         },
         fetched_at: new Date().toISOString(),
       };
@@ -83,7 +108,7 @@ export default function ServerStatus() {
 
   useEffect(() => {
     fetchStatus();
-    const interval = setInterval(fetchStatus, 30000); // 30 seconds
+    const interval = setInterval(fetchStatus, 30000); // refresh every 30s
     return () => clearInterval(interval);
   }, []);
 
@@ -120,11 +145,13 @@ export default function ServerStatus() {
 
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-            status?.online 
-              ? 'bg-accent/20 text-accent shadow-glow-accent' 
-              : 'bg-destructive/20 text-destructive'
-          }`}>
+          <span
+            className={`px-3 py-1 rounded-full text-sm font-semibold ${
+              status?.online
+                ? 'bg-accent/20 text-accent shadow-glow-accent'
+                : 'bg-destructive/20 text-destructive'
+            }`}
+          >
             {status?.online ? 'ONLINE' : 'OFFLINE'}
           </span>
         </div>
