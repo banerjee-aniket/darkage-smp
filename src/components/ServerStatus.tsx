@@ -199,9 +199,9 @@ export default function ServerStatus() {
 
         {!status && !loading && (
           <div className="text-center text-muted-foreground py-4">
-            Error fetching server data. You can still renew via the{' '}
+            Error fetching server data. You can still see server status and online players and renew via the{' '}
             <a
-              href="https://freemcserver.net/server/1795866"
+              href="https://freemcserver.p.rapidapi.com/v4/server/1795866/ping"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:underline"
