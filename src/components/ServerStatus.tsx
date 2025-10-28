@@ -57,7 +57,7 @@ export default function ServerStatus() {
       }
 
       const response = await fetch(
-        'https://freemcserver.net/server/1795866',
+        'https://freemcserver.p.rapidapi.com/v4/server/1795866/ping',
         {
           method: 'GET',
           headers: {
@@ -199,9 +199,9 @@ export default function ServerStatus() {
 
         {!status && !loading && (
           <div className="text-center text-muted-foreground py-4">
-            Error fetching server data. You can still see server status and online players and renew via the{' '}
+            Error fetching server data. You can still see server status, online players etc and renew the via the{' '}
             <a
-              href="https://freemcserver.p.rapidapi.com/v4/server/1795866/ping"
+              href="https://freemcserver.net/server/1795866"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:underline"
