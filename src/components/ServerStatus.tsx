@@ -57,7 +57,7 @@ export default function ServerStatus() {
       }
 
       const response = await fetch(
-        'https://freemcserver.p.rapidapi.com/v4/server/1795866/ping',
+        'https://freemcserver.net/server/1795866',
         {
           method: 'GET',
           headers: {
