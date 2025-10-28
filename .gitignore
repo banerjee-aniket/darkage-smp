@@ -7,18 +7,51 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Node modules
+node_modules/
 
-# Editor directories and files
+# Build output
+dist/
+dist-ssr/
+out/
+build/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Editor & system files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# TypeScript cache
+*.tsbuildinfo
+
+# macOS + Windows trash
+$RECYCLE.BIN/
+.Trashes/
+
+# Local data files
+*.local
+*.pid
+*.seed
+*.tgz
+
+# Lockfiles (optional — keep one if you want deterministic builds)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Misc
+coverage/
+.temp/
+.cache/
