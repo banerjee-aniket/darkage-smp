@@ -21,11 +21,11 @@ interface ServerStatusData {
 
 interface ApiResponse {
   success: boolean;
-  data: {
-    online: boolean;
+  data?: {
+    online?: boolean;
     players?: {
-      online: number;
-      max: number;
+      online?: number;
+      max?: number;
     };
     version?: {
       name_clean?: string;
@@ -52,6 +52,7 @@ export default function ServerStatus() {
       if (!RAPIDAPI_KEY || !FMCS_TOKEN) {
         console.error('API credentials not found');
         toast.error('API credentials not configured');
+        setStatus(null);
         return;
       }
 
@@ -73,24 +74,33 @@ export default function ServerStatus() {
       }
 
       const api: ApiResponse = await response.json();
+
+      // Ensure structure is valid
+      if (!api.success || !api.data) {
+        throw new Error('Invalid API structure');
+      }
+
       const payload = api.data;
 
+      // Log API response for debugging
+      console.log('Fetched payload:', payload);
+
       const simplifiedData: ServerStatusData = {
-        online: payload.online || false,
+        online: !!payload.online,
         players: {
-          online: payload.players?.online || 0,
-          max: payload.players?.max || 0,
+          online: payload.players?.online ?? 0,
+          max: payload.players?.max ?? 0,
         },
         version: {
           name:
-            payload.version?.name_clean ||
-            payload.version?.name ||
+            payload.version?.name_clean ??
+            payload.version?.name ??
             'Unknown',
         },
         motd: {
           raw:
-            payload.motd?.clean?.[0] ||
-            payload.motd?.raw?.[0] ||
+            payload.motd?.clean?.[0] ??
+            payload.motd?.raw?.[0] ??
             'Welcome to DarkAge SMP',
         },
         fetched_at: new Date().toISOString(),
@@ -101,6 +111,7 @@ export default function ServerStatus() {
     } catch (error) {
       console.error('Failed to fetch server status:', error);
       toast.error('Failed to fetch server status');
+      setStatus(null); // reset state on error
     } finally {
       setLoading(false);
     }
@@ -108,7 +119,7 @@ export default function ServerStatus() {
 
   useEffect(() => {
     fetchStatus();
-    const interval = setInterval(fetchStatus, 30000); // refresh every 30s
+    const interval = setInterval(fetchStatus, 30000); // every 30s
     return () => clearInterval(interval);
   }, []);
 
