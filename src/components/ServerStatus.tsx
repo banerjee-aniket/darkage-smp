@@ -6,102 +6,37 @@ import { toast } from 'sonner';
 
 interface ServerStatusData {
   online: boolean;
-  players: {
-    online: number;
-    max: number;
-  };
-  version: {
-    name: string;
-  };
-  motd: {
-    raw: string;
-  };
+  players: { online: number; max: number };
+  version: { name: string };
+  motd: { raw: string };
   fetched_at: string;
-}
-
-interface ApiResponse {
-  success: boolean;
-  data?: {
-    online?: boolean;
-    players?: {
-      online?: number;
-      max?: number;
-    };
-    version?: {
-      name_clean?: string;
-      name?: string;
-    };
-    motd?: {
-      clean?: string[];
-      raw?: string[];
-    };
-  };
 }
 
 export default function ServerStatus() {
   const [status, setStatus] = useState<ServerStatusData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const fetchStatus = async () => {
     setLoading(true);
     try {
-      const RAPIDAPI_KEY = import.meta.env.VITE_RAPIDAPI_KEY;
-      const FMCS_TOKEN = import.meta.env.VITE_FMCS_TOKEN;
-
-      if (!RAPIDAPI_KEY || !FMCS_TOKEN) {
-        console.error('API credentials not found');
-        toast.error('API credentials not configured');
-        setStatus(null);
-        return;
-      }
-
       const response = await fetch(
-        'https://freemcserver.p.rapidapi.com/v4/server/1795866/ping',
-        {
-          method: 'GET',
-          headers: {
-            'x-rapidapi-key': RAPIDAPI_KEY,
-            'x-rapidapi-host': 'freemcserver.p.rapidapi.com',
-            'User-Agent': 'FMCS-USER-2502975',
-            'X-FMCS-Token': FMCS_TOKEN,
-          },
-        }
+        'https://api.mcsrvstat.us/bedrock/3/darkagesmp.enderman.cloud:31938'
       );
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const api: ApiResponse = await response.json();
-
-      // Ensure structure is valid
-      if (!api.success || !api.data) {
-        throw new Error('Invalid API structure');
-      }
-
-      const payload = api.data;
-
-      // Log API response for debugging
-      console.log('Fetched payload:', payload);
+      const data = await response.json();
+      console.log('Fetched payload:', data);
 
       const simplifiedData: ServerStatusData = {
-        online: !!payload.online,
+        online: !!data.online,
         players: {
-          online: payload.players?.online ?? 0,
-          max: payload.players?.max ?? 0,
+          online: data.players?.online ?? 0,
+          max: data.players?.max ?? 0,
         },
-        version: {
-          name:
-            payload.version?.name_clean ??
-            payload.version?.name ??
-            'Unknown',
-        },
+        version: { name: data.version ?? 'Unknown' },
         motd: {
-          raw:
-            payload.motd?.clean?.[0] ??
-            payload.motd?.raw?.[0] ??
-            'Welcome to DarkAge SMP',
+          raw: data.motd?.raw?.join('\n') ?? 'Welcome to DarkAge SMP',
         },
         fetched_at: new Date().toISOString(),
       };
@@ -111,15 +46,17 @@ export default function ServerStatus() {
     } catch (error) {
       console.error('Failed to fetch server status:', error);
       toast.error('Failed to fetch server status');
-      setStatus(null); // reset state on error
+      setStatus(null);
     } finally {
       setLoading(false);
     }
   };
 
+  // Fetch once on mount
   useEffect(() => {
     fetchStatus();
-    const interval = setInterval(fetchStatus, 30000); // every 30s
+    // Optional: auto-refresh every 30 minutes (1800000 ms)
+    const interval = setInterval(fetchStatus, 1800000);
     return () => clearInterval(interval);
   }, []);
 
@@ -176,6 +113,7 @@ export default function ServerStatus() {
                   {status.players.online}/{status.players.max}
                 </div>
               </div>
+
               <div className="bg-muted p-3 rounded-lg">
                 <div className="text-muted-foreground text-sm">Version</div>
                 <div className="text-xl font-bold text-secondary">
@@ -186,7 +124,7 @@ export default function ServerStatus() {
 
             <div className="bg-muted p-3 rounded-lg">
               <div className="text-muted-foreground text-sm mb-1">MOTD</div>
-              <div className="text-foreground font-mono text-sm">
+              <div className="text-foreground font-mono text-sm whitespace-pre-line">
                 {status.motd.raw}
               </div>
             </div>
@@ -199,14 +137,15 @@ export default function ServerStatus() {
 
         {!status && !loading && (
           <div className="text-center text-muted-foreground py-4">
-            Error fetching server data. You can still see server status, online players etc and renew the via the{' '}
+            Error fetching server data. You can still view server details and
+            renew your server on{' '}
             <a
               href="https://freemcserver.net/server/1795866"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:underline"
             >
-              public page
+              the public page
             </a>
             .
           </div>
