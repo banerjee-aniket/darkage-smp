@@ -2,6 +2,7 @@ import { ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import ServerStatus from '@/components/ServerStatus';
+import NoticeBoard from '@/components/NoticeBoard';
 
 export default function Index() {
   return (
@@ -80,6 +81,11 @@ export default function Index() {
         {/* Server Status */}
         <section className="max-w-2xl mx-auto">
           <ServerStatus />
+        </section>
+
+        {/* Notice Board */}
+        <section className="max-w-4xl mx-auto">
+          <NoticeBoard />
         </section>
 
         {/* Support Section */}
