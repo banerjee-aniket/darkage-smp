@@ -27,7 +27,7 @@
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://darkagesmp.com/" />
-    <meta property="og:image" content="/darkage_logo.png" />
+    <meta property="og:image" content="https://darkagesmp.com/100054898.png" />
     <meta property="og:locale" content="en_US" />
 
     <!-- Twitter Cards -->
@@ -35,6 +35,82 @@
     <meta name="twitter:site" content="@DarkAgeSMP" />
     <meta name="twitter:title" content="DarkAge SMP — Survive. Build. Conquer." />
     <meta
+      name="twitter:description"
+      content="Join the official DarkAge SMP server — Survive, build, and conquer your world."
+    />
+    <meta name="twitter:image" content="https://darkagesmp.com/100054898.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://darkagesmp.com/100054898.png" type="image/png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Manifest (for PWA / better mobile SEO) -->
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#121212" />
+
+    <!-- Performance & Prefetch -->
+    <link rel="preload" href="/src/main.tsx" as="script" />
+    <link rel="dns-prefetch" href="https://cdnjs.buymeacoffee.com" />
+
+    <!-- Structured Data for SEO (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "DarkAge SMP",
+        "url": "https://darkagesmp.com",
+        "image": "https://darkagesmp.com/100054898.png",
+        "description": "Minecraft survival multiplayer server where players build, explore, and conquer together.",
+        "inLanguage": "en-US",
+        "applicationCategory": "Game",
+        "operatingSystem": "Cross-platform",
+        "author": {
+          "@type": "Organization",
+          "name": "DarkAge SMP"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "reviewCount": "1200"
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <noscript>
+      <strong>DarkAge SMP requires JavaScript to run. Please enable it to continue.</strong>
+    </noscript>
+
+    <div id="root"></div>
+
+    <!-- Main Script -->
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Buy Me a Coffee Widget -->
+    <script
+      data-name="BMC-Widget"
+      data-cfasync="false"
+      src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+      data-id="donatefordarkage"
+      data-description="Support DarkAge SMP and keep the server alive!"
+      data-message="Love DarkAge SMP? Help us stay online!"
+      data-color="#BD5FFF"
+      data-position="Right"
+      data-x_margin="18"
+      data-y_margin="18"
+    ></script>
+  </body>
+</html>    <meta
       name="twitter:description"
       content="Join the official DarkAge SMP server — Survive, build, and conquer your world."
     />
